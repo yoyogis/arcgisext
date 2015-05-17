@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+<title>Simple Map</title>
+<link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+<style>
+html, body, #map {
+height: 100%;
+width: 100%;
+margin: 0;
+padding: 0;
+}
+body {
+background-color: #FFF;
+overflow: hidden;
+font-family: "Trebuchet MS";
+}
+
+#map1Div ,#map2Div,#splitDiv{
+float:left;
+}
+
+#splitDiv{
+width:2px;
+background:solid 2px green;
+}
+</style>
+<script src="http://js.arcgis.com/3.13/"></script>
+<script>
+var map1,map2;
+
+require(["esri/map", "dojo/_base/connect","dojo/_base/lang", "dojo/domReady!"], function(Map, connect,lang) {
+map1 = new Map("map1Div", {
+basemap: "topo", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
+center: [-122.45, 37.75], // longitude, latitude
+zoom: 13
+});
+map2 = new Map("map2Div", {
+basemap: "topo", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
+center: [-122.45, 37.75], // longitude, latitude
+zoom: 13
+});
+map3 = new Map("map3Div", {
+basemap: "topo", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
+center: [-122.45, 37.75], // longitude, latitude
+zoom: 13
+});
+map4 = new Map("map4Div", {
+basemap: "topo", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
+center: [-122.45, 37.75], // longitude, latitude
+zoom: 13
+});
+
+var mapArray = [map1,map2,map3,map4];
+connectMaps(mapArray);
+
+function connectMaps(maps){
+	var panStatus = {source:maps[0],startMap:null};
+	for(var i=0;i<maps.length;i++){
+		var map1 = maps[i];
+		connect.connect(map1,"onMouseDragStart",lang.hitch(this,function(map){
+			panStatus.source = map;
+		}, map1));
+
+		connect.connect(map1,"onMouseOver",lang.hitch(this,function(map){
+			if(!panStatus.source._isPanningOrZooming()){
+				panStatus.source = map;
+			}
+		}, map1));
+
+		connect.connect(map1,"onExtentChange",lang.hitch(this,function(map){
+			sameExtent(map);
+		}, map1));
+	}
+
+	function sameExtent(mm){
+		for(var j=0;j<maps.length;j++){
+			var mapTarget = maps[j];
+			if(panStatus.source==mm&&mm!=mapTarget){
+				mapTarget.centerAndZoom(mm.extent.getCenter(),mm.getZoom());
+			}
+		}
+	}
+}
+});
+</script>
+</head>
+<body>
+<div id="map1Div"></div>
+<div id="splitDiv"></div>
+<div id="map2Div"></div>
+<div id="map3Div"></div>
+<div id="map4Div"></div>
+</body>
+</html>
