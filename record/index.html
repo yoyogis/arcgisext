@@ -4,6 +4,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5650c092812f8659cdfe23eeb42024ef"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 		<style type="text/css">
 			html,body{
 				border:0px;
@@ -15,11 +16,22 @@
 	<script type="text/javascript">
 		function onload(){
 			navigator.geolocation.watchPosition(onPositionChanged);
-			function onPositionChanged(){
-				console.log(arguments);
+			function onPositionChanged(loc){
+				var data = {
+					user:user,
+					timestamp:loc.timestamp,
+					lat:loc.coords.latitude,
+					lon:loc.coords.longitude
+				};
+				updateView(lat,lon);
 			}
+		}
+		
+		function updateView(lat,lon){
+			$("#output").html(lat+","+lon+"\n"+$("#output").html());
 		}
 	</script>
 	<body onload = "onload()">
+	<div id="output"></div>
 	</body>
 </html>
